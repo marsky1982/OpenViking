@@ -21,7 +21,7 @@ The wheel version must match the tag the branch is based on.
 | Patch | Setting | Linear |
 |---|---|---|
 | Global tool deny-list: tools named here are never registered for the agent, subagents or MCP wrappers | `bot.tools.disabled_tools: list[str]` (default `[]`) | MAR-69 |
-| Per-asker group memory: for Feishu private chats, POST `{open_id, query}` to a trusted service (Bearer token from `token_env`) and inject the returned context as a "Group Memory" section; failures and timeouts inject nothing | `bot.group_recall.{enabled,url,token_env,timeout_seconds,max_chars}` (default off) | MAR-71 |
+| Per-asker group memory: for Feishu private chats, POST `{union_id, query}` (union_id from the message event) to a trusted service (Bearer token from `token_env`) and inject the returned context as a "Group Memory" section; failures and timeouts inject nothing | `bot.group_recall.{enabled,url,token_env,timeout_seconds,max_chars}` (default off) | MAR-71 |
 
 ## Tests
 

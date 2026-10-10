@@ -1092,6 +1092,8 @@ class FeishuChannel(BaseChannel):
                     "chat_mode": chat_mode,
                     "topic_title": topic_title if isinstance(topic_title, str) else "",
                     "sender_id": sender_id,
+                    # Cross-app id of the sender; used by bot.group_recall (Edison patch).
+                    "sender_union_id": getattr(sender.sender_id, "union_id", None) or "",
                 },
             )
 

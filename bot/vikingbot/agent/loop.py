@@ -2230,6 +2230,7 @@ class AgentLoop:
                 remote_skills_summary=remote_skills_summary,
                 enable_subagents=self._subagents_enabled(),
                 config=self.config,
+                sender_union_id=(msg.metadata or {}).get("sender_union_id"),
             )
 
             # Build initial messages (use OpenViking session context when enabled)

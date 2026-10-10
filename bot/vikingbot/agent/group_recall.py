@@ -2,7 +2,7 @@
 
 OpenViking does not know chat membership, so the bot cannot decide which group memories a
 sender may read. When ``bot.group_recall`` is enabled, a trusted service receives the
-sender's Feishu open_id and the query, checks membership, and returns assembled context.
+sender's Feishu union_id (taken from the message event) and the query, checks membership, and returns assembled context.
 Failures never block the reply: they are logged and treated as "no group memory".
 """
 
@@ -27,7 +27,7 @@ def applies(
         and session_key.type == "feishu"
         and not is_group_chat
         and sender_id
-        and sender_id.startswith("ou_")
+        and sender_id.startswith("on_")
     )
 
 
@@ -37,7 +37,7 @@ async def fetch_group_memory(
     query: str,
     transport: httpx.AsyncBaseTransport | None = None,
 ) -> str:
-    """Return group memory context for ``sender_id``, or "" when disabled or on any failure."""
+    """Return group memory for the sender (``sender_id`` is the union_id), or "" on any failure."""
     cfg = config.group_recall
     token = os.environ.get(cfg.token_env, "")
     if not token or not query.strip():
@@ -48,7 +48,7 @@ async def fetch_group_memory(
         async with httpx.AsyncClient(timeout=cfg.timeout_seconds, transport=transport) as client:
             response = await client.post(
                 cfg.url,
-                json={"open_id": sender_id, "query": query[:2000]},
+                json={"union_id": sender_id, "query": query[:2000]},
                 headers={"Authorization": f"Bearer {token}"},
             )
         if response.status_code != 200:

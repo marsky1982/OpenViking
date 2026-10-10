@@ -46,6 +46,7 @@ class ContextBuilder:
         remote_skills_summary: str = "",
         enable_subagents: bool = True,
         config: "Config | None" = None,
+        sender_union_id: str | None = None,
     ):
         self.workspace = workspace
         self._templates_ensured = False
@@ -53,6 +54,7 @@ class ContextBuilder:
         self._memory = None
         self._skills = None
         self._sender_id = sender_id
+        self._sender_union_id = sender_union_id
         self._actor_peer_id = actor_peer_id or sender_id
         self._sender_name = sender_name
         self._is_group_chat = is_group_chat
@@ -297,9 +299,11 @@ The following local and remote Skills extend your capabilities.
                 self.latest_relevant_memories = viking_memory
                 parts.append(f"## openviking_search(query=[user_query])\n{viking_memory}")
 
-        if group_recall.applies(self._config, session_key, self._sender_id, self._is_group_chat):
+        if group_recall.applies(
+            self._config, session_key, self._sender_union_id, self._is_group_chat
+        ):
             group_memory = await group_recall.fetch_group_memory(
-                self._config, self._sender_id, current_message
+                self._config, self._sender_union_id, current_message
             )
             if group_memory:
                 parts.append(
