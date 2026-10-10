@@ -58,8 +58,18 @@ class ToolRegistry:
             >>> tool = MyTool()
             >>> registry.register(tool)
             >>> assert registry.has(tool.name)
+
+        Tools named in ``config.tools.disabled_tools`` are skipped, so they are
+        neither shown to the model nor executable.
         """
+        if tool.name in self._disabled_tool_names():
+            logger.debug(f"Tool '{tool.name}' disabled by tools.disabled_tools; not registered")
+            return
         self._tools[tool.name] = tool
+
+    def _disabled_tool_names(self) -> set[str]:
+        tools_config = getattr(self.config, "tools", None)
+        return set(getattr(tools_config, "disabled_tools", None) or ())
 
     def unregister(self, name: str) -> None:
         """

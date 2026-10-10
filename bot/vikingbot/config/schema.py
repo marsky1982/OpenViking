@@ -723,6 +723,10 @@ class ToolsConfig(BaseModel):
     cron: CronConfig = Field(default_factory=CronConfig)
     exec: ExecToolConfig = Field(default_factory=ExecToolConfig)
     mcp_servers: dict[str, MCPServerConfig] = Field(default_factory=dict)
+    # Tool names never registered for any agent or subagent, including MCP tools
+    # (``mcp_<server>_<tool>``). Unlike the per-request OpenAPI ``disabled_tools``,
+    # this applies to every channel.
+    disabled_tools: list[str] = Field(default_factory=list)
 
 
 class SandboxNetworkConfig(BaseModel):
