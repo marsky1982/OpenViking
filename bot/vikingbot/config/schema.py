@@ -862,6 +862,20 @@ class RemoteSkillsConfig(BaseModel):
     cache_max_bytes: int = Field(default=256 * 1024 * 1024, ge=1)
 
 
+class GroupRecallConfig(BaseModel):
+    """Per-asker group memory from an external service, injected for Feishu private chats.
+
+    The service receives the sender's open_id and the user query, decides which groups the
+    sender may read, and returns assembled context. Disabled by default.
+    """
+
+    enabled: bool = False
+    url: str = ""
+    token_env: str = "VIKINGBOT_GROUP_RECALL_TOKEN"
+    timeout_seconds: float = Field(default=5.0, gt=0.0, le=30.0)
+    max_chars: int = Field(default=4000, ge=1)
+
+
 class Config(BaseSettings):
     """Root configuration for vikingbot."""
 
@@ -877,6 +891,7 @@ class Config(BaseSettings):
     sandbox: SandboxConfig = Field(default_factory=SandboxConfig)
     heartbeat: HeartbeatConfig = Field(default_factory=HeartbeatConfig)
     langfuse: LangfuseConfig = Field(default_factory=LangfuseConfig)
+    group_recall: GroupRecallConfig = Field(default_factory=GroupRecallConfig)
     hooks: list[str] = Field(["vikingbot.hooks.builtins.openviking_hooks.hooks"])
     skills: list[str] = Field(
         default_factory=lambda: [
